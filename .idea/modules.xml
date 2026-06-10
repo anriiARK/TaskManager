@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TaskTormeti.iml" filepath="$PROJECT_DIR$/TaskTormeti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ManagerUI/ManagerUI.iml" filepath="$PROJECT_DIR$/ManagerUI/ManagerUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TaskManager.iml" filepath="$PROJECT_DIR$/TaskManager.iml" />
     </modules>
   </component>
 </project>
