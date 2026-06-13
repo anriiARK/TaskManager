@@ -1,37 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class Main {
 
-    public static void connect() {
-
-        String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "\\db\\TaskData.db";
-
-        String sql = "SELECT * FROM Tasks";
-
-        System.out.println(url);
-
-        try (var conn = DriverManager.getConnection(url);
-             var stmt  = conn.createStatement();
-             var rs = stmt.executeQuery(sql)) {
-
-            while(rs.next())
-            {
-                System.out.println(rs.getInt("UID") + " " + rs.getString("TaskName") + " " + rs.getString("TaskDescription"));
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public static void main(String[] args) {
 
-        connect();
+        dbSQLite.select();
+
+        Calendar cal = new GregorianCalendar();
+
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1);
+        int dge = cal.get(Calendar.DAY_OF_WEEK);
+
+        System.out.println(dge);
+        //System.out.println();
 
         JFrame TaskManager = new JFrame("Task Manager");
         ManagerForm TaskManagerForm = new ManagerForm();
