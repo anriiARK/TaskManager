@@ -35,7 +35,7 @@ public class ManagerForm {
         String[] columns = new String[] { "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი", "კვირა" };
 
         Calendar calendar = new GregorianCalendar();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1);
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 2, 1);
         int tvis_pirveli_dge = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         if (tvis_pirveli_dge == 0)
             tvis_pirveli_dge = 7;
@@ -77,7 +77,7 @@ public class ManagerForm {
         tblTasks.getTableHeader().setReorderingAllowed(false);
         tblTasks.getTableHeader().setResizingAllowed(false);
 
-        // ujrashi defaultad shuashi aris data
+        // ujrashi defaultad shuashi iwereba data
         DefaultTableCellRenderer topLeft = new DefaultTableCellRenderer();
         topLeft.setVerticalAlignment(SwingConstants.TOP);
         topLeft.setHorizontalAlignment(SwingConstants.LEFT);
