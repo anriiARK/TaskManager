@@ -2,36 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 
 import java.sql.*;
+
+import java.util.Vector;
+import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Vector;
-
 
 public class Main {
 
     public static void main(String[] args) {
-
-        String sql = "SELECT * FROM Tasks WHERE UID > ?";
-        Vector<Object> params = new Vector<>();
-        params.add(0);
-
-        Vector<Task> data = new Vector<>();
-
-        dbSQLite.select(sql, params, data, Task.class);
-
-        for (Task t : data)
-        {
-            System.out.println(String.format("%d %s", t.UID, t.TaskName));
-        }
-
-        Calendar cal = new GregorianCalendar();
-
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1);
-        int dge = cal.get(Calendar.DAY_OF_WEEK);
-
-        //System.out.println(dge);
-        //System.out.println();
 
         JFrame TaskManager = new JFrame("Task Manager");
         ManagerForm TaskManagerForm = new ManagerForm();
@@ -47,6 +26,5 @@ public class Main {
         TaskManager.setMinimumSize(minSize);
 
         TaskManager.setVisible(true);
-
     }
 }

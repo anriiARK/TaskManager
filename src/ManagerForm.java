@@ -5,6 +5,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -16,58 +18,80 @@ import java.util.Vector;
 public class ManagerForm {
 
     private JPanel pnlManager;
+    private JToolBar jtbMenu;
+    //gilakebi
     private JButton btnNewEvent;
     private JButton btnDay;
     private JButton btnWeek;
     private JButton btnMonth;
-    private JToolBar jtbMenu;
-    private JTable tblTasks;
+    //cxrili
     private JScrollPane jspTasks;
-    private JPanel MenuPanel;
+    private JTable tblTasks;
 
     public JPanel getManagerPanel()
     {
         return pnlManager;
     }
 
+    public ManagerForm() {
+
+        String sql = "SELECT * FROM Tasks WHERE UID > ?";
+        Vector<Object> params = new Vector<>();
+        params.add(0);
+
+        Vector<DataModel> data = new Vector<>();
+        dbSQLite.select(sql, params, data, Task.class);
+        DataModelLists.getInstance().addDataModelList(DataModelListsEnum.TaskData , data);
+
+        // eventebi
+        btnNewEvent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnNewEvent_Clicked();
+            }
+        });
+
+        btnDay.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnDay_Clicked();
+            }
+        });
+
+        btnWeek.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnWeek_Clicked();
+            }
+        });
+
+        btnMonth.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnMonth_Clicked();
+            }
+        });
+
+        // resize eventi
+        // ujris zomebis morgeba fanjris zomis shesabamisad
+        jspTasks.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                jspTasks_Resized();
+            }
+        });
+    }
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
         String[] columns = new String[] { "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი", "კვირა" };
 
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 2, 1);
-        int tvis_pirveli_dge = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-        if (tvis_pirveli_dge == 0)
-            tvis_pirveli_dge = 7;
-        int tvis_bolo_ricxvi = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-
         // tableModelis gamocxadeba da ujrebis cvlileba = false;
-        DefaultTableModel tblModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        // Kalendaris shevseba;
-        int pirv = tvis_pirveli_dge;
-        Integer ricxvi = 1;
-        while(ricxvi <= tvis_bolo_ricxvi) {
-
-            Vector<String> Days = new Vector<>();
-
-            for (int i = 1; i <= 7; i++)
-            {
-                if (i >= pirv && ricxvi <= tvis_bolo_ricxvi) {
-                    Days.add(ricxvi.toString());
-                    ricxvi++;
-                }
-                else
-                    Days.add("");
-            }
-
-            pirv = 0;
-            tblModel.addRow(Days);
+        DefTableModel tblModel = new DefTableModel(columns);
+        Vector<Vector<Integer>> Days = KalenadrisAwyoba_tve();
+        for (Vector<Integer> row : Days)
+        {
+            tblModel.addRow(row);
         }
 
         tblTasks = new JTable(tblModel);
@@ -85,22 +109,93 @@ public class ManagerForm {
         {
             tblTasks.getColumnModel().getColumn(i).setCellRenderer(topLeft);
         }
-
-        // ujris zomebis morgeba shesabamisad
-        jspTasks.getViewport().addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-
-                int rows = tblTasks.getRowCount();
-
-                if (rows > 0)
-                {
-                    int viewportH = jspTasks.getViewport().getHeight();
-                    int rowHeight = viewportH / rows;
-                    tblTasks.setRowHeight(rowHeight);
-                }
-            }
-        });
     }
 
+    private void btnNewEvent_Clicked()
+    {
+
+    }
+
+    private void btnDay_Clicked()
+    {
+
+    }
+
+    private void btnWeek_Clicked()
+    {
+
+    }
+
+    private void btnMonth_Clicked()
+    {
+
+    }
+
+    private void jspTasks_Resized()
+    {
+        int rows = tblTasks.getRowCount();
+
+        if (rows > 0)
+        {
+            int viewportH = jspTasks.getViewport().getHeight();
+            int rowHeight = viewportH / rows;
+            tblTasks.setRowHeight(rowHeight);
+        }
+    }
+
+    private static class DefTableModel extends DefaultTableModel {
+        public DefTableModel(String[] columns) {
+            super(columns, 0);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    }
+
+    private Vector<Vector<Integer>> KalenadrisAwyoba_tve()
+    {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
+        int tvis_pirveli_dge = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (tvis_pirveli_dge == 0)
+            tvis_pirveli_dge = 7;
+        int tvis_bolo_ricxvi = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        // Kalendaris shevseba;
+        int pirv = tvis_pirveli_dge;
+        int ricxvi = 1;
+        Vector<Vector<Integer>> Days = new Vector<>();
+        while(ricxvi <= tvis_bolo_ricxvi) {
+
+            Days.add(new Vector<>());
+            for (int i = 1; i <= 7; i++)
+            {
+                if (i >= pirv && ricxvi <= tvis_bolo_ricxvi) {
+                    Days.lastElement().add(ricxvi);
+                    ricxvi++;
+                }
+                else
+                {
+                    // Calendar cal = new GregorianCalendar();
+                    // cal.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    Calendar cal = (Calendar) calendar.clone();
+
+                    if (i < pirv)
+                        cal.add(Calendar.DAY_OF_MONTH, i - pirv);
+                    else {
+                        cal.add(Calendar.DAY_OF_MONTH, ricxvi - tvis_bolo_ricxvi);
+                        ricxvi++;
+                    }
+                    Days.lastElement().add(cal.get(Calendar.DAY_OF_MONTH));
+                }
+            }
+
+            pirv = 0;
+            calendar.set(Calendar.DAY_OF_MONTH, tvis_bolo_ricxvi);
+        }
+
+        return Days;
+    }
 }

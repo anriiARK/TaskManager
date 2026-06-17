@@ -7,7 +7,7 @@ public abstract class dbSQLite {
     public static String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "\\db\\TaskData.db";
 
 
-    public static <T extends DataModel> void select(String sql, Vector<Object> params, Vector<T> data, Class<T> type) {
+    public static <T1 extends DataModel, T2 extends DataModel> void select(String sql, Vector<Object> params, Vector<T1> data, Class<T2> type) {
 
         System.out.println(url);
 
@@ -34,10 +34,10 @@ public abstract class dbSQLite {
                 while (rs.next()) {
                     System.out.println(String.format("%d, %s, %s, %s, %s", rs.getInt("UID"), rs.getString("TaskName"), rs.getString("Description"), rs.getString("CreationDate"), rs.getString("DueDate")));
 
-                    T task = type.getDeclaredConstructor().newInstance();
+                    T2 task = type.getDeclaredConstructor().newInstance();
                     task.Init(rs);
 
-                    data.add(task);
+                    data.add((T1) task);
                 }
             }
             catch (Exception e)
