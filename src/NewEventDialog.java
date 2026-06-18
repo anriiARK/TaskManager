@@ -2,6 +2,11 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 
 public class NewEventDialog extends JDialog {
     private JPanel contentPane;
@@ -14,11 +19,16 @@ public class NewEventDialog extends JDialog {
     private JLabel lblDueDate;
     private JLabel lblDescription;
     private JScrollPane jspDescription;
+    private JLabel lblTitle;
+
+    private Task result = null;
 
     public NewEventDialog() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(btnOK);
+
+        txtDescription.setLineWrap(true);
 
         btnOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -50,17 +60,51 @@ public class NewEventDialog extends JDialog {
 
     private void onOK() {
 
+        if (txtTitle.getText().trim().isEmpty())
+        {
+            JOptionPane.showMessageDialog(contentPane, "მიუთითეთ სახელი!");
+            return;
+        }
 
+        String sql = "INSERT INTO Tasks (TaskName, Status, CreationDate, DueDate, Description) VALUES (?, ?, ?, ?, ?) RETURNING UID;";
+        Vector<Object> params = new Vector<>();
 
-        dispose();
+        set_params(params);
+
+//        for (Object obj : params) {
+//            System.out.println(obj.toString());
+//        }
+
+        int uid = dbSQLite.insert(sql, params);
+        setVisible(false);
+        result = new Task();
+        result.UID = uid;
+        result.TaskName = txtTitle.getText();
+        result.Status = 1;
+        result.CreationDate = new Date();
+        result.DueDate = new Date(dpDueDate.getDate().getYear(), dpDueDate.getDate().getMonth().getValue() - 1, dpDueDate.getDate().getDayOfMonth());
+        result.Description = txtDescription.getText();
     }
 
     private void onCancel() {
-        // add your code here if necessary
-        dispose();
+        setVisible(false);
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
+
+    private void set_params(Vector<Object> params)
+    {
+        params.add(txtTitle.getText());
+        params.add(1);
+        params.add(LocalDate.now().toString());
+        params.add(dpDueDate.getDate().toString());
+        params.add(txtDescription.getText());
+    }
+
+    public Task getDialogResult() {
+        return result;
+    }
+
 }
