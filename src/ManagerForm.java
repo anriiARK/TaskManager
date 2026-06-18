@@ -101,6 +101,10 @@ public class ManagerForm {
         tblTasks.getTableHeader().setReorderingAllowed(false);
         tblTasks.getTableHeader().setResizingAllowed(false);
 
+        // erti ujris archeva
+        tblTasks.setCellSelectionEnabled(true);
+        tblTasks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //
+
         // ujrashi defaultad shuashi iwereba data
         DefaultTableCellRenderer topLeft = new DefaultTableCellRenderer();
         topLeft.setVerticalAlignment(SwingConstants.TOP);
@@ -113,7 +117,14 @@ public class ManagerForm {
 
     private void btnNewEvent_Clicked()
     {
+        Dimension dialogSize = new Dimension(300, 350);
 
+        NewEventDialog damateba = new NewEventDialog();
+        damateba.setSize(dialogSize);
+        damateba.setResizable(false);
+        damateba.setLocationRelativeTo(null);
+
+        damateba.setVisible(true);
     }
 
     private void btnDay_Clicked()
@@ -151,6 +162,17 @@ public class ManagerForm {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
+        }
+    }
+
+    private static class arkTable extends JTable {
+        public arkTable(DefTableModel defTableModel) {
+            super(defTableModel);
+        }
+
+        @Override
+        public void changeSelection(int row, int col, boolean ctrl, boolean shift) {
+            // ?
         }
     }
 
