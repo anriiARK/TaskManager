@@ -29,20 +29,15 @@ public class ManagerForm {
     private JScrollPane jspTasks;
     private JTable tblTasks;
 
-    public JPanel getManagerPanel()
-    {
-        return pnlManager;
-    }
-
     public ManagerForm() {
 
-        String sql = "SELECT * FROM Tasks WHERE UID > ?";
+        String sql = "SELECT * FROM Tasks WHERE Status = ?";
         Vector<Object> params = new Vector<>();
-        params.add(0);
+        params.add(1);
 
         Vector<DataModel> data = new Vector<>();
         dbSQLite.select(sql, params, data, Task.class);
-        DataModelLists.getInstance().addDataModelList(DataModelListsEnum.TaskData , data);
+        DataModelLists.getInstance().addDataModelList(DataModelListsEnum.Task, data);
 
         // eventebi
         btnNewEvent.addActionListener(new ActionListener() {
@@ -83,6 +78,11 @@ public class ManagerForm {
         });
     }
 
+    public JPanel getManagerPanel()
+    {
+        return pnlManager;
+    }
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
         String[] columns = new String[] { "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი", "კვირა" };
@@ -118,7 +118,7 @@ public class ManagerForm {
 
     private void btnNewEvent_Clicked()
     {
-        Dimension dialogSize = new Dimension(300, 350);
+        Dimension dialogSize = new Dimension(340, 220);
 
         NewEventDialog damateba = new NewEventDialog();
         damateba.setSize(dialogSize);
@@ -126,6 +126,14 @@ public class ManagerForm {
         damateba.setLocationRelativeTo(null);
 
         damateba.setVisible(true);
+
+        Task task = damateba.getDialogResult();
+
+        damateba.dispose();
+
+        if (task != null) {
+            DataModelLists.getInstance().insertToList(DataModelListsEnum.Task, task);
+        }
     }
 
     private void btnDay_Clicked()

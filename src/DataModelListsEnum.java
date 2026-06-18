@@ -1,5 +1,5 @@
 public enum DataModelListsEnum {
 
-    TaskData;
+    Task;
 
 }

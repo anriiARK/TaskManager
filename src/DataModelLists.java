@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.util.EnumMap;
 import java.util.Vector;
 
@@ -23,6 +24,11 @@ public final class DataModelLists {
 
     public void addDataModelList(DataModelListsEnum key, Vector<DataModel> list) {
         DataModelListsMap.put(key, list);
+    }
+
+    public void insertToList(DataModelListsEnum key, DataModel value) {
+        Vector<DataModel> list = getDataModelList(key);
+        list.add(value);
     }
 
 }
