@@ -1,8 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -10,11 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
-import com.github.lgooddatepicker.components.DatePicker;
 
 public class ManagerForm {
 
@@ -28,6 +23,16 @@ public class ManagerForm {
     //cxrili
     private JScrollPane jspTasks;
     private JTable tblTasks;
+    private JButton btnNextMonth;
+    private JButton btnPrevMonth;
+    private JLabel lblCalendarDate;
+
+    private static int Weli;
+    private static int Tve;
+    private static int Dge;
+    private static final String[] columns = new String[] { "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი", "კვირა" };
+    private static final String[] MonthsGE = new String[] { "იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი" };
+    private static DefTableModel tblModel;
 
     public ManagerForm() {
 
@@ -68,6 +73,20 @@ public class ManagerForm {
             }
         });
 
+        btnNextMonth.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnNextMonth_Clicked();
+            }
+        });
+
+        btnPrevMonth.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnPrevMonth_Clicked();
+            }
+        });
+
         // resize eventi
         // ujris zomebis morgeba fanjris zomis shesabamisad
         jspTasks.getViewport().addComponentListener(new ComponentAdapter() {
@@ -85,18 +104,19 @@ public class ManagerForm {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        String[] columns = new String[] { "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი", "კვირა" };
+
+
+        Weli = LocalDate.now().getYear();;
+        Tve = LocalDate.now().getMonthValue() - 1;
+        Dge = 1;
+        lblCalendarDate = new JLabel(String.format("%d - %s   ", Weli, MonthsGE[Tve])); // sanam kalendars ar vcvli manam ratomgac ar chans es labeli
 
         // tableModelis gamocxadeba da ujrebis cvlileba = false;
-        DefTableModel tblModel = new DefTableModel(columns);
-        Vector<Vector<Integer>> Days = KalenadrisAwyoba_tve();
-        for (Vector<Integer> row : Days)
-        {
-            tblModel.addRow(row);
-        }
-
+        tblModel = new DefTableModel(columns);
         tblTasks = new JTable(tblModel);
         jspTasks = new JScrollPane(tblTasks);
+
+        updateCalendar();
 
         // svetebis gadaadgileba/resize = false;
         tblTasks.getTableHeader().setReorderingAllowed(false);
@@ -114,6 +134,17 @@ public class ManagerForm {
         {
             tblTasks.getColumnModel().getColumn(i).setCellRenderer(topLeft);
         }
+    }
+
+    private void updateCalendar() {
+        tblModel.setRowCount(0);
+        Vector<Vector<Integer>> Days = KalenadrisAwyoba_tve();
+        for (Vector<Integer> row : Days)
+        {
+            tblModel.addRow(row);
+        }
+        tblTasks.setModel(tblModel);
+        lblCalendarDate.setText(String.format("%d - %s   ", Weli, MonthsGE[Tve]));
     }
 
     private void btnNewEvent_Clicked()
@@ -136,19 +167,28 @@ public class ManagerForm {
         }
     }
 
-    private void btnDay_Clicked()
-    {
+    private void btnDay_Clicked() { return; }
+    private void btnWeek_Clicked() { return; }
+    private void btnMonth_Clicked() { return; }
 
+    private void btnNextMonth_Clicked() {
+        Tve++;
+        if (Tve >= 12) {
+            Tve = 0;
+            Weli++;
+        }
+        updateCalendar();
+        jspTasks_Resized();
     }
 
-    private void btnWeek_Clicked()
-    {
-
-    }
-
-    private void btnMonth_Clicked()
-    {
-
+    private void btnPrevMonth_Clicked() {
+        Tve--;
+        if (Tve < 0) {
+            Tve = 11;
+            Weli--;
+        }
+        updateCalendar();
+        jspTasks_Resized();
     }
 
     private void jspTasks_Resized()
@@ -174,21 +214,11 @@ public class ManagerForm {
         }
     }
 
-    private static class arkTable extends JTable {
-        public arkTable(DefTableModel defTableModel) {
-            super(defTableModel);
-        }
-
-        @Override
-        public void changeSelection(int row, int col, boolean ctrl, boolean shift) {
-            // ?
-        }
-    }
-
     private Vector<Vector<Integer>> KalenadrisAwyoba_tve()
     {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
+        calendar.set(Weli, Tve, Dge);
+
         int tvis_pirveli_dge = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         if (tvis_pirveli_dge == 0)
             tvis_pirveli_dge = 7;
