@@ -7,13 +7,13 @@ public class NewEventDialog extends JDialog {
     private JPanel contentPane;
     private JButton btnOK;
     private JButton btnCancel;
-    private JFormattedTextField txtDescritption;
-    private JLabel lblDescription;
-    private JPanel pnlDescription;
-    private JScrollPane jspDescritption;
-    private JTextField txtTitle;
+    private JPanel pnlDialog;
+    private JTextArea txtDescription;
     private DatePicker dpDueDate;
+    private JTextField txtTitle;
     private JLabel lblDueDate;
+    private JLabel lblDescription;
+    private JScrollPane jspDescription;
 
     public NewEventDialog() {
         setContentPane(contentPane);
@@ -49,7 +49,9 @@ public class NewEventDialog extends JDialog {
     }
 
     private void onOK() {
-        // add your code here
+
+
+
         dispose();
     }
 
