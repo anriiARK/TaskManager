@@ -10,8 +10,8 @@ public abstract class dbSQLite {
     public static <T1 extends DataModel, T2 extends DataModel> void select(String sql, Vector<Object> params, Vector<T1> data, Class<T2> type)
     {
         try (Connection conn = DriverManager.getConnection(url);
-             PreparedStatement stmt  = conn.prepareStatement(sql)) {
-
+             PreparedStatement stmt  = conn.prepareStatement(sql))
+        {
             fillPreparedStatement(stmt, params);
 
             try (ResultSet rs = stmt.executeQuery())
@@ -38,17 +38,40 @@ public abstract class dbSQLite {
     public static int insert(String sql, Vector<Object> params)
     {
         try (Connection conn = DriverManager.getConnection(url);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+            PreparedStatement stmt = conn.prepareStatement(sql))
+        {
             fillPreparedStatement(stmt, params);
 
-            return stmt.executeUpdate();
+            try (ResultSet rs = stmt.executeQuery())
+            {
+                rs.next();
+                return rs.getInt("UID");
+            }
+            catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
         return 0;
+    }
+
+    // update da delete
+    public static boolean executeQuery(String sql, Vector<Object> params) {
+
+        try (Connection conn = DriverManager.getConnection(url);
+            PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            fillPreparedStatement(stmt, params);
+            return stmt.execute();
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     private static void fillPreparedStatement(PreparedStatement stmt, Vector<Object> params)
