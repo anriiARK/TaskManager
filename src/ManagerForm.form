@@ -20,7 +20,7 @@
           <component id="bdbeb" class="javax.swing.JButton" binding="btnNewEvent">
             <constraints/>
             <properties>
-              <text value="ახალი დავალება"/>
+              <text value="ახალი "/>
             </properties>
           </component>
           <component id="ebce0" class="javax.swing.JButton" binding="btnDay">

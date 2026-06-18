@@ -1,3 +1,5 @@
+import com.github.lgooddatepicker.components.DatePicker;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -5,12 +7,13 @@ public class NewEventDialog extends JDialog {
     private JPanel contentPane;
     private JButton btnOK;
     private JButton btnCancel;
-    private JTextField txtTaskName;
-    private JTextField txtDueDate;
-    private JTextField txtDescription;
-    private JLabel lblTaskName;
-    private JLabel lblDueDate;
+    private JFormattedTextField txtDescritption;
     private JLabel lblDescription;
+    private JPanel pnlDescription;
+    private JScrollPane jspDescritption;
+    private JTextField txtTitle;
+    private DatePicker dpDueDate;
+    private JLabel lblDueDate;
 
     public NewEventDialog() {
         setContentPane(contentPane);
@@ -53,5 +56,9 @@ public class NewEventDialog extends JDialog {
     private void onCancel() {
         // add your code here if necessary
         dispose();
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
