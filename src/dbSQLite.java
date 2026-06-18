@@ -1,5 +1,4 @@
 import java.sql.*;
-import java.util.Dictionary;
 import java.util.Vector;
 
 public abstract class dbSQLite {
@@ -17,7 +16,7 @@ public abstract class dbSQLite {
             try (ResultSet rs = stmt.executeQuery())
             {
                 while (rs.next()) {
-                    System.out.println(String.format("%d, %s, %s, %s, %s", rs.getInt("UID"), rs.getString("TaskName"), rs.getString("Description"), rs.getString("CreationDate"), rs.getString("DueDate")));
+                    //System.out.println(String.format("%d, %s, %s, %s, %s", rs.getInt("UID"), rs.getString("TaskName"), rs.getString("Description"), rs.getString("CreationDate"), rs.getString("DueDate")));
 
                     T2 task = type.getDeclaredConstructor().newInstance();
                     task.Init(rs);

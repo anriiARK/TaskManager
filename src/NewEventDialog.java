@@ -3,9 +3,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 import javax.swing.*;
 import java.awt.event.*;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 public class NewEventDialog extends JDialog {
@@ -16,10 +14,7 @@ public class NewEventDialog extends JDialog {
     private JTextArea txtDescription;
     private DatePicker dpDueDate;
     private JTextField txtTitle;
-    private JLabel lblDueDate;
-    private JLabel lblDescription;
     private JScrollPane jspDescription;
-    private JLabel lblTitle;
 
     private Task result = null;
 
@@ -88,10 +83,6 @@ public class NewEventDialog extends JDialog {
 
     private void onCancel() {
         setVisible(false);
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 
     private void set_params(Vector<Object> params)
