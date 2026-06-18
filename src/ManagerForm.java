@@ -43,6 +43,8 @@ public class ManagerForm {
         Vector<DataModel> data = new Vector<>();
         dbSQLite.select(sql, params, data, Task.class);
         DataModelLists.getInstance().addDataModelList(DataModelListsEnum.Task, data);
+        updateCalendar();
+
 
         // eventebi
         btnNewEvent.addActionListener(new ActionListener() {
@@ -95,6 +97,8 @@ public class ManagerForm {
                 jspTasks_Resized();
             }
         });
+
+        lblCalendarDate.setText(String.format("%d - %s   ", Weli, MonthsGE[Tve]));
     }
 
     public JPanel getManagerPanel()
@@ -109,14 +113,11 @@ public class ManagerForm {
         Weli = LocalDate.now().getYear();;
         Tve = LocalDate.now().getMonthValue() - 1;
         Dge = 1;
-        lblCalendarDate = new JLabel(String.format("%d - %s   ", Weli, MonthsGE[Tve])); // sanam kalendars ar vcvli manam ratomgac ar chans es labeli
 
         // tableModelis gamocxadeba da ujrebis cvlileba = false;
         tblModel = new DefTableModel(columns);
         tblTasks = new JTable(tblModel);
         jspTasks = new JScrollPane(tblTasks);
-
-        updateCalendar();
 
         // svetebis gadaadgileba/resize = false;
         tblTasks.getTableHeader().setReorderingAllowed(false);
@@ -138,8 +139,8 @@ public class ManagerForm {
 
     private void updateCalendar() {
         tblModel.setRowCount(0);
-        Vector<Vector<Integer>> Days = KalenadrisAwyoba_tve();
-        for (Vector<Integer> row : Days)
+        Vector<Vector<String>> Days = KalenadrisAwyoba_tve();
+        for (Vector<String> row : Days)
         {
             tblModel.addRow(row);
         }
@@ -214,10 +215,9 @@ public class ManagerForm {
         }
     }
 
-    private Vector<Vector<Integer>> KalenadrisAwyoba_tve()
+    private Vector<Vector<String>> KalenadrisAwyoba_tve()
     {
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Weli, Tve, Dge);
+        Calendar calendar = new GregorianCalendar(Weli, Tve, Dge);
 
         int tvis_pirveli_dge = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         if (tvis_pirveli_dge == 0)
@@ -226,31 +226,62 @@ public class ManagerForm {
 
         // Kalendaris shevseba;
         int pirv = tvis_pirveli_dge;
-        int ricxvi = 1;
-        Vector<Vector<Integer>> Days = new Vector<>();
+        Integer ricxvi = 1;
+        Vector<Vector<String>> Days = new Vector<>();
+        Calendar ujra = null;
+
         while(ricxvi <= tvis_bolo_ricxvi) {
 
             Days.add(new Vector<>());
             for (int i = 1; i <= 7; i++)
             {
+                String dgis_info = "";
                 if (i >= pirv && ricxvi <= tvis_bolo_ricxvi) {
-                    Days.lastElement().add(ricxvi);
+                    dgis_info = ricxvi.toString() + "<br>";
                     ricxvi++;
                 }
                 else
                 {
                     // Calendar cal = new GregorianCalendar();
                     // cal.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                    Calendar cal = (Calendar) calendar.clone();
+                    Calendar cal = new GregorianCalendar(Weli, Tve, Dge);
 
                     if (i < pirv)
+                    {
                         cal.add(Calendar.DAY_OF_MONTH, i - pirv);
-                    else {
+                        if (ujra == null)
+                            ujra = (Calendar) cal.clone();
+                    }
+                    else
+                    {
                         cal.add(Calendar.DAY_OF_MONTH, ricxvi - tvis_bolo_ricxvi);
                         ricxvi++;
                     }
-                    Days.lastElement().add(cal.get(Calendar.DAY_OF_MONTH));
+                    Integer sxva_ricxvi = cal.get(Calendar.DAY_OF_MONTH);
+                    dgis_info = sxva_ricxvi.toString() + "<br>";
                 }
+
+                Vector<DataModel> DataList = DataModelLists.getInstance().getDataModelList(DataModelListsEnum.Task);
+
+                if (ujra == null)
+                    ujra = new GregorianCalendar(Weli, Tve, Dge);
+
+                for (DataModel data : DataList)
+                {
+                    Task task = (Task) data;
+                    if (task == null)
+                        continue;
+
+                    if (ujra.getTime().compareTo(task.DueDate) == 0) {
+                        //System.out.println(task.TaskName + " " + task.DueDate);
+                        dgis_info += task.TaskName + "<br>";
+                    }
+                }
+
+                dgis_info = "<html>" + dgis_info + "</html>";
+
+                Days.lastElement().add(dgis_info);
+                ujra.add(Calendar.DAY_OF_MONTH, 1);
             }
 
             pirv = 0;

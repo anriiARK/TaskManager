@@ -44,10 +44,10 @@
           <hspacer id="31896">
             <constraints/>
           </hspacer>
-          <component id="350f9" class="javax.swing.JLabel" binding="lblCalendarDate" custom-create="true">
+          <component id="350f9" class="javax.swing.JLabel" binding="lblCalendarDate">
             <constraints/>
             <properties>
-              <text value=""/>
+              <text value="hello"/>
             </properties>
           </component>
           <component id="80b9" class="javax.swing.JButton" binding="btnPrevMonth">
